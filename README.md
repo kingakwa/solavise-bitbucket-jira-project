@@ -21,7 +21,7 @@
 #install docker compose
 `sudo rm /usr/local/bin/docker-compose`
 `sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose`
--sudo chmod +x /usr/local/bin/docker-compose
+1sudo chmod +x /usr/local/bin/docker-compose1
 -docker-compose --version
 - mkdir bitbucket
 -cd bitbucket
@@ -29,11 +29,11 @@
 -vim inventory.ini
 - enter this code
   
-- [jira]
-- localhost ansible_connection=local
+` [jira]
+`localhost ansible_connection=local`
 
-- [bitbucket]
--localhost ansible_connection=local
+` [bitbucket]
+`localhost ansible_connection=local`
 
 - vim deploy-bitbucket.yal   -paste your code but i have already added the  code to the file
 
@@ -41,10 +41,10 @@
 
 - after run this code
 
-- inventory.ini deploy-jira.yml
--ansible-playbook -i inventory.ini deploy-bitbucket.yml
+  `inventory.ini deploy-jira.yml`
+`ansible-playbook -i inventory.ini deploy-bitbucket.yml`
 
-- Then create your docker-compose.yml. i have already created the file 
+- Then create your docker-compose.yml file. i have already created the file 
 - run this command 
 - docker-compose up -d
 - check your browser with your ip:address.
