@@ -2,7 +2,8 @@
 
 -create an instance
 -install ansible
--sudo apt update && sudo apt upgrade -y
+-sudo apt update 
+-sudo apt upgrade -y
 -sudo apt install -y ansible
 -ansible --version
 
