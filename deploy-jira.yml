@@ -1,0 +1,32 @@
+---
+- name: Deploy Jira using Docker
+  hosts: jira
+  become: yes
+  collections:
+    - community.docker
+  tasks:
+    - name: Create a Docker network for JIRA and Bitbucket
+      docker_network:
+        name: atlassian-net
+        state: present
+
+    - name: Pull JIRA Docker Image
+      docker_image:
+        name: atlassian/jira-software
+        tag: latest
+        source: pull
+
+    - name: Run JIRA Container
+      docker_container:
+        name: jira
+        image: atlassian/jira-software:latest
+        state: started
+        ports:
+          - "8080:8080"
+        restart_policy: always
+        networks:
+          - name: atlassian-net
+        env:
+          JVM_MINIMUM_MEMORY: 2g
+          JVM_MAXIMUM_MEMORY: 4g
+

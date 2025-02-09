@@ -1,0 +1,33 @@
+---
+- name: Deploy Bitbucket using Docker
+  hosts: bitbucket
+  become: yes
+  collections:
+    - community.docker
+  tasks:
+    - name: Create a Docker network for JIRA and Bitbucket
+      docker_network:
+        name: atlassian-net
+        state: present
+
+    - name: Pull Bitbucket Docker Image
+      docker_image:
+        name: atlassian/bitbucket
+        tag: latest
+        source: pull
+
+    - name: Run Bitbucket Container
+      docker_container:
+        name: bitbucket
+        image: atlassian/bitbucket:latest
+        state: started
+        ports:
+          - "7990:7990"
+        restart_policy: always
+        networks:
+          - name: atlassian-net
+        env:
+           JVM_MINIMUM_MEMORY=2g
+           JVM_MAXIMUM_MEMORY=4g
+
+

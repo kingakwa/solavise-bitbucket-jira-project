@@ -1,0 +1,47 @@
+ports:
+      - "8080:8080"
+    environment:
+      - JIRA_HOME=/var/atlassian/application-data/jira
+      - JIRA_DB_TYPE=postgresql
+      - JIRA_DB_HOST=db
+      - JIRA_DB_PORT=5432
+      - JIRA_DB_NAME=jiradb
+      - JIRA_DB_USER=jirauser    #create your own password
+      - JIRA_DB_PASSWORD=jirapassword   #create your own password
+    volumes:
+      - jira_data:/var/atlassian/application-data/jira
+    depends_on:
+      - db
+
+  bitbucket:
+    image: atlassian/bitbucket-server:latest
+    container_name: bitbucket
+    ports:
+      - "7990:7990"
+    environment:
+      - BITBUCKET_HOME=/var/atlassian/application-data/bitbucket
+      - BITBUCKET_DB_HOST=db
+      - BITBUCKET_DB_PORT=5432
+      - BITBUCKET_DB_NAME=bitbucketdb
+      - BITBUCKET_DB_USER=bitbucketuser        #create your own username
+      - BITBUCKET_DB_PASSWORD=bitbucketpassword #create your own password
+    volumes:
+      - bitbucket_data:/var/atlassian/application-data/bitbucket
+    depends_on:
+      - db
+
+  db:
+    image: postgres:latest
+    container_name: postgres-db
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgrespassword
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  jira_data:
+  bitbucket_data:
+  postgres_data:
+
