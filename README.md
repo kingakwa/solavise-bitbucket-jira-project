@@ -29,11 +29,11 @@
 -vim inventory.ini
 - enter this code
   
-` [jira]
-`localhost ansible_connection=local`
+ [jira]
+`localhost ansible_connection=local
 
 ` [bitbucket]
-`localhost ansible_connection=local`
+`localhost ansible_connection=local
 
 - vim deploy-bitbucket.yal   -paste your code but i have already added the  code to the file
 
