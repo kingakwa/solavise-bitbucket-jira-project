@@ -30,7 +30,7 @@
 - enter this code
   
  [jira]
-`localhost ansible_connection=local
+localhost ansible_connection=local
 
 ` [bitbucket]
 `localhost ansible_connection=local
