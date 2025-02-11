@@ -1,0 +1,101 @@
+version: '3.8'
+
+services:
+  jira:
+    image: atlassian/jira-software:latest
+    container_name: jira
+    ports:
+      - "8080:8080"
+    environment:
+      - JIRA_HOME=/var/atlassian/application-data/jira
+      - ATL_JDBC_URL=jdbc:postgresql://db:5432/jiradb
+      - ATL_JDBC_USER=jirauser
+      - ATL_JDBC_PASSWORD=your_secure_password
+      - ATL_DB_DRIVER=org.postgresql.Driver
+      - JVM_MINIMUM_MEMORY=2048m
+      - JVM_MAXIMUM_MEMORY=4096m
+      - ATL_PROXY_NAME=your_domain.com
+      - ATL_PROXY_PORT=443
+      - ATL_TOMCAT_SCHEME=https
+      - ATL_TOMCAT_SECURE=true
+    volumes:
+      - jira_data:/var/atlassian/application-data/jira
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - atlassian_network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  bitbucket:
+    image: atlassian/bitbucket-server:latest
+    container_name: bitbucket
+    ports:
+      - "7990:7990"
+      - "7999:7999"  # SSH port for Git operations
+    environment:
+      - BITBUCKET_HOME=/var/atlassian/application-data/bitbucket
+      - JDBC_DRIVER=org.postgresql.Driver
+      - JDBC_URL=jdbc:postgresql://db:5432/bitbucketdb
+      - JDBC_USER=bitbucketuser
+      - JDBC_PASSWORD=your_secure_password
+      - SERVER_PROXY_NAME=your_domain.com
+      - SERVER_PROXY_PORT=443
+      - SERVER_SCHEME=https
+      - SERVER_SECURE=true
+      - JVM_MINIMUM_MEMORY=2048m
+      - JVM_MAXIMUM_MEMORY=4096m
+    volumes:
+      - bitbucket_data:/var/atlassian/application-data/bitbucket
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - atlassian_network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:7990"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  db:
+    image: postgres:13
+    container_name: postgres-db
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=your_secure_postgres_password
+      - POSTGRES_DB=postgres
+      # Add individual database creation
+      - POSTGRES_MULTIPLE_DATABASES=jiradb,bitbucketdb
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-databases.sh:/docker-entrypoint-initdb.d/init-databases.sh
+    networks:
+      - atlassian_network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+volumes:
+  jira_data:
+    driver: local
+  bitbucket_data:
+    driver: local
+  postgres_data:
+    driver: local
+
+networks:
+  atlassian_network:
+    driver: bridge
