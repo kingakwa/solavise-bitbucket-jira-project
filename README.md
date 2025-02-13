@@ -76,8 +76,8 @@
 
 OR
 
-`ansible-playbook -i inventory.ini deploy-jira.yml
-ansible-playbook -i inventory.ini deploy-bitbucket.yml`
+`ansible-playbook -i inventory.ini deploy-jira.yml deploy-bitbucket.yml
+`
 
 - Then create your docker-compose.yml file. i have already created the file
 - 
